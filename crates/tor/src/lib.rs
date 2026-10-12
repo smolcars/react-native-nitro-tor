@@ -92,6 +92,11 @@ pub struct OwnedTorService {
 
 pub type TorStatusObserver = Arc<dyn Fn(TorControlEvent) + Send + Sync + 'static>;
 
+fn notify_observer(observer: &TorStatusObserver, event: TorControlEvent) {
+    // Status callbacks can wait on locks held by synchronous Tor operations.
+    tokio::task::block_in_place(|| observer(event));
+}
+
 #[repr(C)]
 pub struct TorHiddenServiceParam {
     pub to_port: u16,
@@ -525,6 +530,7 @@ impl OwnedTorService {
         let Some(observer) = observer else {
             return;
         };
+        let observer = move |event| notify_observer(&observer, event);
         let control_port = self.control_port.clone();
         self.event_handle = Some(ensure_runtime().spawn(async move {
             let mut retry_delay = std::time::Duration::from_millis(250);
@@ -643,7 +649,7 @@ where
                         if let (Some(observer), Ok(status)) =
                             (observer.as_ref(), parse_bootstrap_status(&input))
                         {
-                            observer(TorControlEvent::Bootstrap(status));
+                            notify_observer(observer, TorControlEvent::Bootstrap(status));
                         }
                         if !input.trim().contains("PROGRESS=100 TAG=done") {
                             tokio::time::sleep(Duration::from_millis(300)).await;
@@ -724,6 +730,39 @@ mod tests {
             _ctl: RefCell::new(Some(connection)),
             event_handle: None,
         }
+    }
+
+    #[test]
+    fn blocked_status_observer_does_not_stall_runtime() {
+        let runtime = tokio::runtime::Builder::new_multi_thread()
+            .worker_threads(1)
+            .enable_all()
+            .build()
+            .unwrap();
+        let gate = Arc::new(std::sync::Mutex::new(()));
+        let guard = gate.lock().unwrap();
+        let observer_gate = gate.clone();
+        let (entered_tx, entered_rx) = std::sync::mpsc::channel();
+        let observer: TorStatusObserver = Arc::new(move |_| {
+            entered_tx.send(()).unwrap();
+            let _guard = observer_gate.lock().unwrap();
+        });
+        runtime.spawn(async move {
+            notify_observer(
+                &observer,
+                TorControlEvent::NetworkLiveness(NetworkLiveness::Up),
+            );
+        });
+        entered_rx.recv_timeout(Duration::from_secs(1)).unwrap();
+
+        let (progress_tx, progress_rx) = std::sync::mpsc::channel();
+        runtime.spawn(async move {
+            tokio::time::sleep(Duration::from_millis(1)).await;
+            let _ = progress_tx.send(());
+        });
+        let progressed = progress_rx.recv_timeout(Duration::from_secs(1));
+        drop(guard);
+        assert!(progressed.is_ok(), "Status observer stalled the runtime");
     }
 
     #[test]

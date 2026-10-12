@@ -21,6 +21,12 @@ jobs:
         run: brew install autoconf automake libtool
       - name: Build both macOS architectures
         run: bash scripts/build-macos.sh
+      - name: Test Rust workspace
+        run: |
+          export MACOSX_DEPLOYMENT_TARGET=14.0
+          export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+          export ac_cv_func_pipe2=no
+          cargo test --locked --workspace --release --target "$(rustc -vV | sed -n 's/^host: //p')"
       - name: Link both architectures and test the host bridge
         run: bash scripts/test-macos.sh
       - name: Validate the committed framework
