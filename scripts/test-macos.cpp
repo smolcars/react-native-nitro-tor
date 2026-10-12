@@ -7,23 +7,28 @@ using namespace craby::reactnativenitrotor::bridging;
 int main(int argc, char **argv) {
   try {
     auto tor = createReactNativeNitroTor(1, "");
-    if (getServiceStatus(*tor) != 2 || shutdownService(*tor)) {
+    if (std::string(getStatus(*tor)) != "{\"state\":\"stopped\"}") {
       throw std::runtime_error("Expected a stopped Tor service");
     }
+    stop(*tor);
 
     // Optional live test: use a fresh directory, never an existing app's data.
     if (argc == 2) {
-      StartTorParams params{argv[1], 19050, 19051, 120000};
-      auto result = startTorIfNotRunning(*tor, params);
-      if (!result.is_success || result.onion_address.empty()) {
-        throw std::runtime_error(std::string(result.error_message));
+      NativeTorConfig params{argv[1], 19050, 120000};
+      auto status = start(*tor, params);
+      if (std::string(status).find("\"state\":\"running\"") == std::string::npos) {
+        throw std::runtime_error("Expected a running Tor service");
       }
-      HttpGetParams request{"https://check.torproject.org/api/ip", "", 60000, false};
-      auto response = httpGet(*tor, request);
-      bool passed = response.status_code == 200 &&
-                    std::string(response.body).find("\"IsTor\":true") != std::string::npos;
-      bool stopped = shutdownService(*tor);
-      if (!passed || !stopped || getServiceStatus(*tor) != 2) {
+      NativeHiddenServiceOptions options{80, 19051, {}};
+      auto service = createHiddenService(*tor, options);
+      bool created = !service.onion_address.empty() && service.private_key.size() == 64;
+      NativeHttpRequest request{"https://check.torproject.org/api/ip", "GET", "{}", "", 60000, false};
+      auto response = std::string(httpRequest(*tor, request));
+      bool passed = response.find("\"statusCode\":200") != std::string::npos &&
+                    response.find("\\\"IsTor\\\":true") != std::string::npos;
+      removeHiddenService(*tor, service.onion_address);
+      stop(*tor);
+      if (!created || !passed || std::string(getStatus(*tor)) != "{\"state\":\"stopped\"}") {
         throw std::runtime_error("Tor HTTP request or shutdown failed");
       }
     }
