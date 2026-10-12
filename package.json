@@ -30,6 +30,7 @@
     "dist",
     "android",
     "ios",
+    "macos",
     "cpp",
     "*.podspec",
     "react-native.config.js",
@@ -49,6 +50,7 @@
     "typecheck": "tsc --noEmit",
     "lint": "biome check",
     "build": "sh ./scripts/craby-build-env.sh craby build && tsdown",
+    "build:macos": "bash ./scripts/build-macos.sh",
     "clean": "craby clean"
   },
   "keywords": [

@@ -10,11 +10,14 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => min_ios_version_supported }
+  s.platforms    = { :ios => min_ios_version_supported, :osx => '14.0' }
   s.source       = { :git => "https://github.com/niteshbalusu11/react-native-nitro-tor.git", :tag => "#{s.version}" }
 
   s.source_files = ["ios/**/*.{m,mm,cc,cpp}", "cpp/**/*.cpp"]
-  s.vendored_frameworks = "ios/framework/libreactnativenitrotor.xcframework"
+  s.ios.vendored_frameworks = "ios/framework/libreactnativenitrotor.xcframework"
+  s.osx.vendored_frameworks = "macos/framework/libreactnativenitrotor.xcframework"
+  s.osx.frameworks = 'Security', 'SystemConfiguration', 'CoreFoundation'
+  s.osx.libraries = 'resolv', 'iconv'
   s.pod_target_xcconfig = {
     "HEADER_SEARCH_PATHS" => [
       '"${PODS_TARGET_SRCROOT}/cpp"',

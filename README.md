@@ -26,10 +26,40 @@ yarn add react-native-nitro-tor
 | Platform | Support                     |
 | -------- | --------------------------- |
 | iOS      | ✅                          |
-| macOS    | ✅                          |
+| macOS    | ✅ macOS 14+, arm64 and x86_64 |
 | Android  | ✅ (arm64-v8a, x86_64, x86, armeabi-v7a) |
 
 ## Usage
+
+### macOS
+
+Use the package with `react-native-macos` and run `pod install` in the app's
+macOS directory. The pod shares the Apple module provider and C++ implementation
+with iOS, but links a separate macOS XCFramework. A sandboxed app needs both
+`com.apple.security.network.client` and `com.apple.security.network.server`
+entitlements: Tor makes outbound connections and opens local SOCKS/control
+listeners. Pass a writable directory inside the app's container as `data_dir`.
+
+To rebuild the macOS library from source on a Mac with Xcode and Rust installed:
+
+```bash
+brew install autoconf automake libtool
+yarn build:macos
+bash scripts/test-macos.sh
+```
+
+The build uses the pinned Rust toolchain and Cargo lockfile and packages both
+Darwin architectures. It does not overwrite Craby's iOS output. The smoke test
+links both architectures and runs on the host architecture. If Darwin artifacts
+were previously built with a different deployment target, run `cargo clean`
+before rebuilding to discard cached native C objects. To also bootstrap
+Tor, create an onion service, verify an HTTPS request uses Tor, and shut down:
+
+```bash
+tor_test_dir=$(mktemp -d)
+bash scripts/test-macos.sh "$tor_test_dir"
+rm -rf "$tor_test_dir"
+```
 
 ### Basic Example
 
@@ -283,7 +313,8 @@ interface HttpResponse {
 
 ## Binary Files
 
-- iOS and MacOS: Binaries are located in the root of the project as `Tor.xcframework`
+- iOS: `ios/framework/libreactnativenitrotor.xcframework`
+- macOS: `macos/framework/libreactnativenitrotor.xcframework`
 - Android: Binaries are located in `android/src/main/jniLibs`
 
 ## Architecture Support
