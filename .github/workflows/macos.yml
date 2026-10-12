@@ -1,0 +1,30 @@
+name: Validate macOS
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_call:
+    inputs:
+      source_sha:
+        required: true
+        type: string
+
+jobs:
+  macos:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.source_sha || github.sha }}
+      - name: Install native build tools
+        run: brew install autoconf automake libtool
+      - name: Build both macOS architectures
+        run: bash scripts/build-macos.sh
+      - name: Link both architectures and test the host bridge
+        run: bash scripts/test-macos.sh
+      - name: Validate the committed framework
+        run: |
+          # Release builds consume the committed binary, as on iOS/Android.
+          git restore macos/framework
+          bash scripts/test-macos.sh
