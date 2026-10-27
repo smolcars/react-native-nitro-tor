@@ -150,7 +150,7 @@ console.log(response.headers); // lowercase names, string[] values
 console.log(response.body);
 ```
 
-Supported methods are `GET`, `POST`, `PUT`, `DELETE`, `HEAD`, and `OPTIONS`. Set `allowInvalidCertificates: true` only when the caller explicitly intends to accept an invalid TLS chain.
+Supported methods are `GET`, `POST`, `PUT`, `DELETE`, `HEAD`, and `OPTIONS`. Set `allowInvalidCertificates: true` only when the caller explicitly intends to accept an invalid TLS chain. Redirects are followed by default; set `followRedirects: false` to get 3xx responses back as-is and vet each `location` header yourself.
 
 ## Ephemeral onion services
 

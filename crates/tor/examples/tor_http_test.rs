@@ -36,6 +36,7 @@ fn main() {
         body: None,
         timeout_ms: Some(30000), // 30 seconds timeout
         trust_invalid_certs: Some(false),
+        follow_redirects: None,
     };
 
     let socks_proxy = format!("127.0.0.1:{}", owned_node.socks_port);
@@ -58,6 +59,7 @@ fn main() {
         body: None,
         timeout_ms: Some(30000),
         trust_invalid_certs: Some(false),
+        follow_redirects: None,
     };
 
     match make_http_request(onion_get_params, socks_proxy.clone()) {
@@ -86,6 +88,7 @@ fn main() {
         body: Some(r#"{"test": "data", "from": "tor"}"#.to_string()),
         timeout_ms: Some(30000), // 30 seconds timeout
         trust_invalid_certs: Some(false),
+        follow_redirects: None,
     };
 
     match make_http_request(post_params, socks_proxy) {

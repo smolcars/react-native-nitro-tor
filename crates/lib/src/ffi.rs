@@ -10,16 +10,6 @@ use bridging::*;
 #[cxx::bridge(namespace = "craby::reactnativenitrotor::bridging")]
 pub mod bridging {
     #[derive(Clone)]
-    struct NativeHttpRequest {
-        url: String,
-        method: String,
-        headers_json: String,
-        body: String,
-        timeout_ms: f64,
-        allow_invalid_certificates: bool,
-    }
-
-    #[derive(Clone)]
     struct NativeTorConfig {
         data_directory: String,
         socks_port: f64,
@@ -37,6 +27,17 @@ pub mod bridging {
     struct NativeHiddenService {
         onion_address: String,
         private_key: Vec<u8>,
+    }
+
+    #[derive(Clone)]
+    struct NativeHttpRequest {
+        url: String,
+        method: String,
+        headers_json: String,
+        body: String,
+        timeout_ms: f64,
+        allow_invalid_certificates: bool,
+        follow_redirects: bool,
     }
 
     extern "Rust" {

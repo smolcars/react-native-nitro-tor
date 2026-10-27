@@ -14,6 +14,7 @@ export interface NativeHttpRequest {
   body: string;
   timeout_ms: number;
   allow_invalid_certificates: boolean;
+  follow_redirects: boolean;
 }
 
 export interface NativeHiddenServiceOptions {

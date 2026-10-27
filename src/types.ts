@@ -72,6 +72,7 @@ export interface TorHttpRequest {
   body?: string;
   timeoutMs?: number;
   allowInvalidCertificates?: boolean;
+  followRedirects?: boolean;
 }
 
 export interface TorHttpResponse {

@@ -68,6 +68,7 @@ impl ReactNativeNitroTorSpec for ReactNativeNitroTor {
             },
             timeout_ms,
             allow_invalid_certificates: request.allow_invalid_certificates,
+            follow_redirects: request.follow_redirects,
         })
     }
 

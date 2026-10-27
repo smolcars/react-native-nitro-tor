@@ -43,6 +43,10 @@ pub struct HttpRequestParams {
     /// authenticates the endpoint and the upstream host typically
     /// presents a self-signed cert (e.g. LND REST).
     pub trust_invalid_certs: Option<bool>,
+    /// When `Some(false)`, 3xx responses are returned as-is instead of
+    /// being followed, so the caller can vet each `Location` itself.
+    /// Defaults to `true`.
+    pub follow_redirects: Option<bool>,
 }
 
 fn build_socks_proxy_url(socks_proxy: &str) -> String {
@@ -75,6 +79,10 @@ pub async fn make_http_request_async(
 
     if params.trust_invalid_certs.unwrap_or(false) {
         builder = builder.danger_accept_invalid_certs(true);
+    }
+
+    if !params.follow_redirects.unwrap_or(true) {
+        builder = builder.redirect(reqwest::redirect::Policy::none());
     }
 
     let client = builder
