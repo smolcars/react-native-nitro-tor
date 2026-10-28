@@ -969,10 +969,10 @@ std::size_t align_of() {
 namespace craby {
   namespace reactnativenitrotor {
     namespace bridging {
-      struct NativeHttpRequest;
       struct NativeTorConfig;
       struct NativeHiddenServiceOptions;
       struct NativeHiddenService;
+      struct NativeHttpRequest;
       struct ReactNativeNitroTor;
       struct ReactNativeNitroTorSignal;
     }
@@ -985,20 +985,6 @@ namespace craby {
 namespace craby {
 namespace reactnativenitrotor {
 namespace bridging {
-#ifndef CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
-#define CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
-struct NativeHttpRequest final {
-  ::rust::String url;
-  ::rust::String method;
-  ::rust::String headers_json;
-  ::rust::String body;
-  double timeout_ms CXX_DEFAULT_VALUE(0);
-  bool allow_invalid_certificates CXX_DEFAULT_VALUE(false);
-
-  using IsRelocatable = ::std::true_type;
-};
-#endif // CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
-
 #ifndef CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeTorConfig
 #define CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeTorConfig
 struct NativeTorConfig final {
@@ -1030,6 +1016,21 @@ struct NativeHiddenService final {
   using IsRelocatable = ::std::true_type;
 };
 #endif // CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHiddenService
+
+#ifndef CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
+#define CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
+struct NativeHttpRequest final {
+  ::rust::String url;
+  ::rust::String method;
+  ::rust::String headers_json;
+  ::rust::String body;
+  double timeout_ms CXX_DEFAULT_VALUE(0);
+  bool allow_invalid_certificates CXX_DEFAULT_VALUE(false);
+  bool follow_redirects CXX_DEFAULT_VALUE(false);
+
+  using IsRelocatable = ::std::true_type;
+};
+#endif // CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$NativeHttpRequest
 
 #ifndef CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$ReactNativeNitroTor
 #define CXXBRIDGE1_STRUCT_craby$reactnativenitrotor$bridging$ReactNativeNitroTor
