@@ -82,6 +82,7 @@ pub struct HttpRequest {
     pub body: Option<String>,
     pub timeout_ms: u64,
     pub allow_invalid_certificates: bool,
+    pub follow_redirects: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -773,6 +774,7 @@ pub fn http_request(request: HttpRequest) -> NativeResult<String> {
         body: request.body,
         timeout_ms: Some(request.timeout_ms),
         trust_invalid_certs: Some(request.allow_invalid_certificates),
+        follow_redirects: Some(request.follow_redirects),
     };
     let result = ensure_runtime().block_on(async {
         tokio::select! {

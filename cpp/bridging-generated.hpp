@@ -194,6 +194,7 @@ struct Bridging<craby::reactnativenitrotor::bridging::NativeHttpRequest> {
     auto obj$body = obj.getProperty(rt, "body");
     auto obj$timeoutMs = obj.getProperty(rt, "timeout_ms");
     auto obj$allowInvalidCertificates = obj.getProperty(rt, "allow_invalid_certificates");
+    auto obj$followRedirects = obj.getProperty(rt, "follow_redirects");
 
     auto _obj$url = react::bridging::fromJs<rust::String>(rt, obj$url, callInvoker);
     auto _obj$method = react::bridging::fromJs<rust::String>(rt, obj$method, callInvoker);
@@ -201,6 +202,7 @@ struct Bridging<craby::reactnativenitrotor::bridging::NativeHttpRequest> {
     auto _obj$body = react::bridging::fromJs<rust::String>(rt, obj$body, callInvoker);
     auto _obj$timeoutMs = react::bridging::fromJs<double>(rt, obj$timeoutMs, callInvoker);
     auto _obj$allowInvalidCertificates = react::bridging::fromJs<bool>(rt, obj$allowInvalidCertificates, callInvoker);
+    auto _obj$followRedirects = react::bridging::fromJs<bool>(rt, obj$followRedirects, callInvoker);
 
     craby::reactnativenitrotor::bridging::NativeHttpRequest ret = {
       _obj$url,
@@ -208,7 +210,8 @@ struct Bridging<craby::reactnativenitrotor::bridging::NativeHttpRequest> {
       _obj$headersJson,
       _obj$body,
       _obj$timeoutMs,
-      _obj$allowInvalidCertificates
+      _obj$allowInvalidCertificates,
+      _obj$followRedirects
     };
 
     return ret;
@@ -222,6 +225,7 @@ struct Bridging<craby::reactnativenitrotor::bridging::NativeHttpRequest> {
     auto _obj$body = react::bridging::toJs(rt, value.body);
     auto _obj$timeoutMs = react::bridging::toJs(rt, value.timeout_ms);
     auto _obj$allowInvalidCertificates = react::bridging::toJs(rt, value.allow_invalid_certificates);
+    auto _obj$followRedirects = react::bridging::toJs(rt, value.follow_redirects);
 
     obj.setProperty(rt, "url", _obj$url);
     obj.setProperty(rt, "method", _obj$method);
@@ -229,6 +233,7 @@ struct Bridging<craby::reactnativenitrotor::bridging::NativeHttpRequest> {
     obj.setProperty(rt, "body", _obj$body);
     obj.setProperty(rt, "timeout_ms", _obj$timeoutMs);
     obj.setProperty(rt, "allow_invalid_certificates", _obj$allowInvalidCertificates);
+    obj.setProperty(rt, "follow_redirects", _obj$followRedirects);
 
     return jsi::Value(rt, obj);
   }

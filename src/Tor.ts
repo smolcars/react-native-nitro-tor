@@ -178,6 +178,7 @@ const http = {
           body: request.body ?? '',
           timeout_ms: timeoutMs,
           allow_invalid_certificates: request.allowInvalidCertificates ?? false,
+          follow_redirects: request.followRedirects ?? true,
         }),
       ) as TorHttpResponse;
     } catch (error) {

@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
       NativeHiddenServiceOptions options{80, 19051, {}};
       auto service = createHiddenService(*tor, options);
       bool created = !service.onion_address.empty() && service.private_key.size() == 64;
-      NativeHttpRequest request{"https://check.torproject.org/api/ip", "GET", "{}", "", 60000, false};
+      NativeHttpRequest request{"https://check.torproject.org/api/ip", "GET", "{}", "", 60000, false, true};
       auto response = std::string(httpRequest(*tor, request));
       bool passed = response.find("\"statusCode\":200") != std::string::npos &&
                     response.find("\\\"IsTor\\\":true") != std::string::npos;

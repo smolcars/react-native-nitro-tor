@@ -86,6 +86,16 @@ describe('Tor facade', () => {
     });
   });
 
+  it('follows redirects unless the caller opts out', async () => {
+    mockNative.httpRequest.mockResolvedValue('{"statusCode":200,"headers":{},"body":""}');
+
+    await Tor.http.request({ url: 'https://example.com' });
+    await Tor.http.request({ url: 'https://example.com', followRedirects: false });
+
+    expect(mockNative.httpRequest.mock.calls[0][0].follow_redirects).toBe(true);
+    expect(mockNative.httpRequest.mock.calls[1][0].follow_redirects).toBe(false);
+  });
+
   it('copies hidden-service keys across the ArrayBuffer boundary', async () => {
     const privateKey = Uint8Array.from({ length: 64 }, (_, index) => index);
     mockNative.createHiddenService.mockResolvedValue({
